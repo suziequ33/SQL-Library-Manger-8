@@ -2,9 +2,9 @@
   "name": "sql-library-manger-8",
   "version": "1.0.0",
   "description": "Using SQL database to implement a dynamic website using JavaScript, Node.js, Epress, Pug SQLite and SQL ORM Sequelize.",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js"
   },
   "keywords": [],
   "author": "",
