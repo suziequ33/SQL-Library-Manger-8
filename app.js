@@ -3,15 +3,15 @@ const { sequelize } = require('./models');
 const path = require('path');
 
 const app = express();
-const routes = require('./routes/index');
+const routes = require('./routes/books');
 
+//Middleware and configurations
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/', routes);
 
-
-app.use(epress.static(path.join(__dirname, 'public')));
-
-
+//Database connection
 sequelize.authenticate()
 .then(() => {
     console.log('Connection to the database has been established successfully.');
@@ -27,23 +27,24 @@ sequelize.sync()
 .catch((error) => {
     console.error('Error syncing the database:', error);
 });
+
+
 // 404 handler
 app.use((req, res, next) => {
     const error = new Error('Not Found');
     error.status = 404;
     next(error);
-    //res.status(404).send('page-not-found', { errer });
+    //res.status(404).send('page-not-found', { error });
 });
 
 //global error handler
 app.use((err, req, res, next) => {
-    res.status = err.status || 500;
+    err.status = err.status || 500;
     err.message = err.message || 'Internal Server Error';
-    console.error(`Error statu: ${err.status} - ${err.message}`);
-
-    res.status(err.status).render('error', { error: err,message });
+    console.log(`Error status: ${err.status} - ${err.message}`);
+    
+    res.status(err.status).render( 'error', { error: err, message: err.message });
 });
-
 
 const PORT = 3000;
 app.listen(PORT, () => {
