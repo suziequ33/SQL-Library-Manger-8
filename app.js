@@ -1,6 +1,7 @@
 const express = require('express');
 const { sequelize } = require('./models');
 const path = require('path');
+const createError = require('http-errors');
 
 const app = express();
 const routes = require('./routes/books');
@@ -28,12 +29,13 @@ sequelize.sync()
     console.error('Error syncing the database:', error);
 });
 
-
 // 404 handler
 app.use((req, res, next) => {
-    const error = new Error('Not Found');
-    error.status = 404;
-    next(error);
+    next(createError(404));
+    //const error = new Error('Not Found');
+    //error.status = 404;
+    //const error = createError(404, 'Page not found');
+    //throw createError(404, 'Page not found');
     //res.status(404).send('page-not-found', { error });
 });
 
@@ -43,7 +45,7 @@ app.use((err, req, res, next) => {
     err.message = err.message || 'Internal Server Error';
     console.log(`Error status: ${err.status} - ${err.message}`);
     
-    res.status(err.status).render( 'error', { error: err, message: err.message });
+    res.status(err.status).render('error', { error: err, message: err.message });
 });
 
 const PORT = 3000;

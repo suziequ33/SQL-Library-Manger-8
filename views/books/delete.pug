@@ -1,0 +1,7 @@
+extends layout
+
+block content 
+    h1 Delete Book 
+    p Are you sue you want to delete this book: #{book.titile}?
+    include books/delete // Reusing the form from delete.pug 
+    

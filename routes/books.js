@@ -1,31 +1,38 @@
 const express = require('express');
 const router = express.Router();
-
 const { Book } = require('../models');
 
-//Get home to /books
-router.get('/', (req, res) => {
-    res.redirect('/books');
+//Handler function to wrap each route
+function asyncHandler(cd) {
+    return async (req, res, next) => {
+        try { 
+            await  cd(req, res, next)
+        } catch (error) {
+            //forward error to the golbal error handler
+            next(error)
+        }
+    };
+}
+
+router.get('/', async (req, res) => {
+    const books = await Book.findAll();
+    res.render('books/index', { books });
 });
 
-//Get to full list of books
-router.get('/books', async(req, res) => {
-    try {
-        const books = await Book.findAll();
-        res.render('books/index', { books });
-    } catch (error) {
-        console.error('Error fetching books:', error);
-        res.status(500).render('error', { error, message: 'Internal Server Error' });
-    }
-});
+//Get books listing
+router.get('/books', asyncHandler(async(req, res) => {
+    const books = await Book.findAll();
+    res.render('books/index', { books });
+}));
+
 
 //Create new book form
-router.get('/books/new', (req, res) => {
+router.get('/new', (req, res) => {
     res.render('books/new', {book: {}, title: "New Book"});
 });
 
 //Post create book from database
-router.post('/books/new', async (req, res) => {
+router.post('/new', asyncHandler(async (req, res) => {
    let book;
     try {
         book = await Book.create(req.body);
@@ -38,66 +45,71 @@ router.post('/books/new', async (req, res) => {
             throw error;
         }
     }
-});
+}));
 
-//Show book detail form
-router.get('/books/:id', async (req, res) => {
-    try {
+// Edit book form
+router.get('/:id/edit', asyncHandler(async (req, res) => {
         const book = await Book.findByPk(req.params.id);
-        res.render('books/detail', { book });
-    } catch (error) {
-        console.error('Error updating book info:', error);
-        res.status(500).render('error', { error, message: 'Internal Server Error'});
+        if (book) {
+        res.render('books/edit', { book, title: 'Edit Book' });
+    } else {
+        res.sendStatus(404);
     }
-});
+}));
+
+//Get individual book
+router.get('/:id', asyncHandler(async (req, res) => {
+    const book = await Book.findByPk(req.params.id);
+    if (book) {
+        res.render('books/detail', { book, title: book.title });
+    } else {
+        res.sendStatus(404);
+    }
+}));
 
 //Update book info from database
-router.post('/books/:id', async (req, res) => {
-    const bookId = req.params.id;
-
+router.post('/:id/edit', asyncHandler(async (req, res) => {
+    let book; 
     try {
         //retrieve existing book from database
-        const bookToUpdate = await Book.findByPk(bookId);
-
-        if(!bookToUpdate) {
-            return res.status(404).render('error', { error: { status: 404 }, message: 'Book not found' });
+         book = await Book.findByPk(req.params.id);
+        if (book) {
+            await book.update(req.body);
+            res.redirect('/books/' + book.id);
+        } else {
+            res.sendStatus(404);
         }
-        //Update the book properites based on the data in req.body
-        bookToUpdate.title = req.body.title;
-        bookToUpdate.author = req.body.author;
-        bookToUpdate.genre = req.body.genre;
-        bookToUpdate.year = req.body.year;
-
-        //Save the changes to the database
-        await bookToUpdate.save();
-        res.redirect(`/books/${bookId}`);
-    } catch {
-        console.error('Error updating book info:', error);
-        res.status(500).render('error', { error, message: 'Internal Server Error' });
-    }
-});
+        } catch (error) {
+            if (error.name === 'SequelizeValidationError') {
+                book = await Book.build(req.body);
+                book.id = req.params.id;
+                res.render('books/edit', { book, error: error.errors, title: 'Edit Book' });
+            } else {
+                throw error; 
+            }
+        }
+        }));
 
 //Delete book form
-router.post('/books/:id/delete', async (req, res) => {
-    const bookId = req.params.id;
-
-    try {
-        //retrieve existing book from database
-        const bookToUpdate = await Book.findByPk(bookId);
-
-        if (!bookToUpdate) {
-            return res.status(404).render('error', { error: { status: 404 }, message: 'Book not found'});
-        }
-        //Delet boo from the database
-        await bookToUpdate.destroy();
-
-        //redirect to the books list after delete
-        res.redirect('/books');
-    } catch (error) {
-        console.error('Error deleting a book:', error);
-        res.status(500).render('error', { error, message: 'Internal Server Error' });
+router.get('/:id/delete', asyncHandler(async (req, res) => {
+    const book = await Book.findByPk(req.params.id);
+    if (book) {
+        res.render('books/delete', { book, title: 'Delete Book' });
+    } else {
+        res.sendStatus(404);
     }
-});
+}));
+
+//Delete individual book
+router.post('/:id/delete', asyncHandler(async (req, res) => {
+    const book = await Book.findByPk(req.params.id);
+    if (book) {
+        await book.destroy();
+        res.redirect('/books');
+    } else {
+        res.sendStatus(404);
+    }
+}));
 
 
 module.exports = router;
