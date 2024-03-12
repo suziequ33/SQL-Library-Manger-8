@@ -1,9 +1,5 @@
-doctype html 
-html 
+extends layout
 
-    head 
-        title=`Server Error ${error.status}` 
-        link(rel='stylesheet', href='/stylesheets/style.css')
-    body 
-        h1= `Server Error ${error.status}`
-        p= error.message
+block content 
+    h1 Server Error 
+    p Sorry! There was a an unexpected error on the server. 

@@ -1,11 +1,6 @@
-doctype html 
-html 
+extends layout 
 
-head 
-    title #{book.title}
-    link(rel='stylesheet', href='/stylesheets/style.css')
-
-body 
+block content 
     h1 #{book.title}
     form(action=`/books/${book.id}`, method='post')
         p 
@@ -16,7 +11,7 @@ body
             input(name='author', type='text', id='author', value=book.author)
         p 
             label(for='genre') Genre 
-            input(name='enre', type='text', id='genre', value=book.genre)
+            input(name='genre', type='text', id='genre', value=book.genre)
         p 
             label(for='year') Year 
             input(name='year', type='text', id='year', value=book.year)
@@ -27,6 +22,3 @@ body
             a.button(href='/books') Cancel 
         p 
             input(type='submit', value='Delete Book')
- 
-
-            
