@@ -9,8 +9,7 @@ function asyncHandler(cd) {
             await  cd(req, res, next)
         } catch (error) {
             //forward error to the golbal error handler
-            next(error)
-            //res.status(500).send(error);
+            next(error);
         }
     };
 }
@@ -24,7 +23,6 @@ router.get('/', async (req, res) => {
         next(error);
     }
 });
-
 
 //Create new book form
 router.get('/new', (req, res) => {
