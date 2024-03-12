@@ -8,3 +8,4 @@
  I did not read way at the bottom of the Getting Started page about the library.db file being the database. 
 Oh I kept getting errors with the pug file. / they are very case sensitive. I like to add blank line at the end. They do not like it. 
 I also deleted the first book The Hunger Games. So I added a few of my favorite books. 
+used Code Beautify/CSS Portal to convert HTML to Pug.

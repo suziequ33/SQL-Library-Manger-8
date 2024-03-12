@@ -19,7 +19,7 @@ app.use(express.urlencoded({extended: true }));
 app.use('/', routes);
 app.use('/books', books);
 
-
+//Function test database connection and synchroize models
 const testDataBaseConn = async() => {
 try {
         await sequelize.authenticate();
