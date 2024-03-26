@@ -9,3 +9,6 @@
 Oh I kept getting errors with the pug file. / they are very case sensitive. I like to add blank line at the end. They do not like it. 
 I also deleted the first book The Hunger Games. So I added a few of my favorite books. 
 used Code Beautify/CSS Portal to convert HTML to Pug.
+*Peer-review by Travis Alstrand. Needed to fix with updating book and title or author are missing throw error. When I changed that
+update didnt redirect to home page. So fixed that. 
+Travie also said then non-existen book id is routed my global errror handler to 

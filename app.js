@@ -2,10 +2,12 @@ const express = require('express');
 const { sequelize } = require('./models');
 const { Book } = require('./models/index');
 const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
 //Routes setup
 const routes = require('./routes/index');
-const books = require('./routes/books')
+const books = require('./routes/books');
 
 const app = express();
 const PORT = 3000;
@@ -13,9 +15,13 @@ const PORT = 3000;
 //Middleware and configurations
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
+
+app.use(logger('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
-app.use(express.urlencoded({extended: true }));
+app.use(express.urlencoded({extended: false }));
+app.use(cookieParser());
+
 app.use('/', routes);
 app.use('/books', books);
 
@@ -34,38 +40,27 @@ try {
 
 testDataBaseConn();
 
-//Database connection
-sequelize.authenticate()
-.then(() => {
-    console.log('Connection to the database has been established successfully.');
-})
-.catch((error) => {
-    console.error('Unable to connect to the database:', error);
-});
-
-sequelize.sync()
-.then(() => {
-    console.log('Database synchronized.');
-
-})
-.catch((error) => {
-    console.error('Error syncing the database:', error);
-});
-
-
 // 404 handler
 app.use((req, res, next) => {
-    const error = new Error('Not Found');
+    const error = new Error('Page Not Found');
     error.status = 404;
     res.status(404).render('page-not-found', { error });
 });
 
 //global error handler
 app.use((err, req, res, next) => {
-    err.status = err.status || 500;
-    err.message = err.message || 'Internal Server Error';
-    console.error(`Error: ${err.status}: ${err.message}`);
-    res.render('error', { err });
+    //res.status(err.status || 500);
+    console.log('Global error handler invoked:', err.message);
+    if (err.status === 404) {
+        //res.render('page-not-found', { error: err });
+        res.status(404).render('page-not-found');
+        //res.render('page-not-found', { err });
+    } else {
+        //res.render('error', { error: err });
+        console.log('Forwarding errror to next middleware:', err.message);
+        next(err);
+    }
+    //res.render('error', { title: err.message });
 });
 
 

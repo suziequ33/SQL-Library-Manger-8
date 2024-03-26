@@ -3,7 +3,7 @@ const {Model, DataTypes} = require('sequelize');
 
 module.exports = (sequelize) => {
   class Book extends Model {
-    static associtate(models) {
+    static associate(models) {
 
     }
   }
