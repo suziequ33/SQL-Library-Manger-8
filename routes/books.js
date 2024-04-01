@@ -48,11 +48,12 @@ router.get('/:id', asyncHandler(async (req, res, next) => {
     const bookId = req.params.id;
     const book = await Book.findByPk(bookId);
     if (book) {
-        res.render('detail', { book });
+        //res.render('detail', { book });
+        res.render('update-book', { book, title: 'Update Book' });
     } else {
         const error = new Error('Book not found');
         error.status = 404;
-        next(error);  //pass the error to the gobal error handler
+        next(error);  //pass the error to the global error handler
     }
 }));
 
