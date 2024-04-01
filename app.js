@@ -49,18 +49,11 @@ app.use((req, res, next) => {
 
 //global error handler
 app.use((err, req, res, next) => {
-    //res.status(err.status || 500);
-    console.log('Global error handler invoked:', err.message);
     if (err.status === 404) {
-        //res.render('page-not-found', { error: err });
         res.status(404).render('page-not-found');
-        //res.render('page-not-found', { err });
     } else {
-        //res.render('error', { error: err });
-        console.log('Forwarding errror to next middleware:', err.message);
         next(err);
     }
-    //res.render('error', { title: err.message });
 });
 
 

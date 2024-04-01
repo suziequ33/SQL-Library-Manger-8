@@ -11,4 +11,5 @@ I also deleted the first book The Hunger Games. So I added a few of my favorite 
 used Code Beautify/CSS Portal to convert HTML to Pug.
 *Peer-review by Travis Alstrand. Needed to fix with updating book and title or author are missing throw error. When I changed that
 update didnt redirect to home page. So fixed that. 
-Travie also said then non-existen book id is routed my global errror handler to 
+Travie also said then non-existen book id is routed my global errror handler to render a friendly 'Page Not Found' page. 
+He said it was due to the usage of res.sendStatus(404). He said to create a new Error, fibing it a status and message and passing it using next(). So I did this.  
