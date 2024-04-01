@@ -68,7 +68,7 @@ router.post('/:id', asyncHandler(async (req, res, next) => {
             //Update book data
             await book.update(req.body);
             //reditect to the list of books
-            res.redirect('/books/' + book.id);
+            res.redirect('/');
         } else {
             //books not found, throw error
             const error = new Error('Book not found');
